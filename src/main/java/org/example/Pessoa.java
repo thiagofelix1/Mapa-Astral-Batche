@@ -151,14 +151,7 @@ public class Pessoa {
 		return Period.between(dataNascimento, LocalDate.now()).getYears();
 	}
 
-	public void criarArquivo(String homePath) throws IOException {
-		String caminho = homePath.concat("/files/" + this.getNome() + ".txt");
-		Path path = Paths.get(caminho);
-		List<String> lines = relatorio();
-		Files.write(path, lines, StandardCharsets.UTF_8);
-	}
-
-	private List<String> relatorio() {
+	public List<String> gerarRelatorio() {
 		return Arrays.asList(
 				"Signo: " + getSigno(),
 				"Geração: " + getGeracao(),

@@ -31,8 +31,9 @@ public class Main {
 
 
         pessoaList.forEach((pessoa -> {
+            String caminho = HOME_PATH.concat("/files/" + pessoa.getNome() + ".txt");
             try {
-                pessoa.criarArquivo(HOME_PATH);
+                Arquivo.criar(caminho, pessoa.gerarRelatorio());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
