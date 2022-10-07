@@ -1,25 +1,16 @@
 package org.example;
 
-import br.com.letsCode.enums.Geracao;
-import br.com.letsCode.enums.Signo;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.MonthDay;
-import java.time.Period;
-import java.time.Year;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-@Data
-@Entity
-@NoArgsConstructor
 public class Pessoa {
-	@Id
-	@GeneratedValue
-	@Type(type="org.hibernate.type.UUIDCharType")
 	private UUID id;
 
 	private String nome;
@@ -27,16 +18,66 @@ public class Pessoa {
 	private String cidadeNascimento;
 
 	private LocalDate dataNascimento;
-
-	@Enumerated(EnumType.STRING)
-	private Signo signo;
+	private String signo;
 
 	private Integer idade;
 
-	@Enumerated(EnumType.STRING)
-	private Geracao geracao;
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getCidadeNascimento() {
+		return cidadeNascimento;
+	}
+
+	public void setCidadeNascimento(String cidadeNascimento) {
+		this.cidadeNascimento = cidadeNascimento;
+	}
+
+	public LocalDate getDataNascimento() {
+		return dataNascimento;
+	}
+
+	public void setDataNascimento(LocalDate dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+
+	public String getSigno() {
+		return signo;
+	}
+
+	public void setSigno(String signo) {
+		this.signo = signo;
+	}
+
+	public Integer getIdade() {
+		return idade;
+	}
+
+	public void setIdade(Integer idade) {
+		this.idade = idade;
+	}
+
+	public String getGeracao() {
+		return geracao;
+	}
+
+	public void setGeracao(String geracao) {
+		this.geracao = geracao;
+	}
+
+	private String geracao;
+
+	public UUID getId() {
+		return id;
+	}
 
 	public Pessoa (String nome, String cidadeNascimento, LocalDate dataNascimento) {
+		this.id = UUID.randomUUID();
 		this.nome = nome;
 		this.cidadeNascimento = cidadeNascimento;
 		this.dataNascimento = dataNascimento;
@@ -45,7 +86,7 @@ public class Pessoa {
 		this.idade = calcularIdade(dataNascimento);
 	}
 
-	public Signo verificarSigno(MonthDay aniversario) {
+	public String verificarSigno(MonthDay aniversario) {
 		MonthDay leaoComecaEm = MonthDay.of(7,22);
 		MonthDay leaoTerminaEm = MonthDay.of(8,23);
 
@@ -60,15 +101,15 @@ public class Pessoa {
 
 		MonthDay escorpiaoComecaEm = MonthDay.of(10,23);		MonthDay escorpiaoTerminaEm = MonthDay.of(11,21);
 
-		if (verificarSeEstaEntreDatas(aniversario, leaoComecaEm, leaoTerminaEm)) return Signo.Leão;
+		if (verificarSeEstaEntreDatas(aniversario, leaoComecaEm, leaoTerminaEm)) return "Leão";
 
-		if (verificarSeEstaEntreDatas(aniversario, sagitarioComecaEm, sagitarioTerminaEm)) return Signo.Sagitário;
+		if (verificarSeEstaEntreDatas(aniversario, sagitarioComecaEm, sagitarioTerminaEm)) return "Sagitário";
 
-		if (verificarSeEstaEntreDatas(aniversario, aquarioComecaEm, aquarioTerminaEm)) return Signo.Aquário;
+		if (verificarSeEstaEntreDatas(aniversario, aquarioComecaEm, aquarioTerminaEm)) return "Aquário";
 
-		if (verificarSeEstaEntreDatas(aniversario, escorpiaoComecaEm, escorpiaoTerminaEm)) return Signo.Escorpião;
+		if (verificarSeEstaEntreDatas(aniversario, escorpiaoComecaEm, escorpiaoTerminaEm)) return "Escorpião";
 
-		if (verificarSeEstaEntreDatas(aniversario, cancerComecaEm, cancerTerminaEm)) return Signo.Câncer;
+		if (verificarSeEstaEntreDatas(aniversario, cancerComecaEm, cancerTerminaEm)) return "Câncer";
 
 		return null;
 	}
@@ -77,7 +118,7 @@ public class Pessoa {
 		return !(dataParaVerificar.isBefore(dataInicio) || dataParaVerificar.isAfter(dataFim)) ;
 	}
 
-	public Geracao definirGeracao(Year anoDeNascimento) {
+	public String definirGeracao(Year anoDeNascimento) {
 		Year boomerInicio = Year.of(1940);
 		Year boomerFim = Year.of(1960);
 
@@ -90,13 +131,13 @@ public class Pessoa {
 		Year zInicio = Year.of(1996);
 		Year zFim = Year.of(2010);
 
-		if (verificarSeEstaEntreAnos(anoDeNascimento, boomerInicio, boomerFim)) return Geracao.Boomer;
+		if (verificarSeEstaEntreAnos(anoDeNascimento, boomerInicio, boomerFim)) return "Boomer";
 
-		if (verificarSeEstaEntreAnos(anoDeNascimento, xInicio, xFim)) return Geracao.X;
+		if (verificarSeEstaEntreAnos(anoDeNascimento, xInicio, xFim)) return "X";
 
-		if (verificarSeEstaEntreAnos(anoDeNascimento, yInicio, yFim)) return Geracao.Y;
+		if (verificarSeEstaEntreAnos(anoDeNascimento, yInicio, yFim)) return "Y";
 
-		if (verificarSeEstaEntreAnos(anoDeNascimento, zInicio, zFim)) return Geracao.Z;
+		if (verificarSeEstaEntreAnos(anoDeNascimento, zInicio, zFim)) return "Z";
 
 		return null;
 	}
@@ -105,8 +146,24 @@ public class Pessoa {
 		return !(anoParaVerificar.isBefore(anoInicio) || anoParaVerificar.isAfter(anoFim));
 	}
 
+
 	private Integer calcularIdade(LocalDate dataNascimento){
 		return Period.between(dataNascimento, LocalDate.now()).getYears();
+	}
+
+	public void criarArquivo(String homePath) throws IOException {
+		String caminho = homePath.concat("/files/" + this.getNome() + ".txt");
+		Path path = Paths.get(caminho);
+		List<String> lines = relatorio();
+		Files.write(path, lines, StandardCharsets.UTF_8);
+	}
+
+	private List<String> relatorio() {
+		return Arrays.asList(
+				"Signo: " + getSigno(),
+				"Geração: " + getGeracao(),
+				"Idade: " + getIdade()
+		);
 	}
 
 }
