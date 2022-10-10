@@ -30,10 +30,11 @@ public class Main {
         });
 
 
-        pessoaList.forEach((pessoa -> {
+        pessoaList.parallelStream().forEach((pessoa -> {
             String caminho = HOME_PATH.concat("/files/" + pessoa.getNome() + ".txt");
             try {
                 Arquivo.criar(caminho, pessoa.gerarRelatorio());
+                System.out.println(pessoa.getNome() + " " + Thread.currentThread().getName());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
